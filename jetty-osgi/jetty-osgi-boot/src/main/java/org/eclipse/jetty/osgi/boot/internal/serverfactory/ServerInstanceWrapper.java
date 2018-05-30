@@ -54,6 +54,7 @@ import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.util.resource.URLResource;
 import org.eclipse.jetty.xml.XmlConfiguration;
 
 /**
@@ -142,7 +143,7 @@ public class ServerInstanceWrapper
 
         for (URL jettyConfiguration : jettyConfigurations)
         {
-            try(Resource r = Resource.newResource(jettyConfiguration))
+            try(Resource r = new BundleResource(jettyConfiguration))
             {
                 // Execute a Jetty configuration file
                 if (!r.exists())
@@ -470,4 +471,14 @@ public class ServerInstanceWrapper
         return files;
     }
 
+    /**
+     * A Resource suitable for use the Bad/Unpredictable URLs from {@link org.osgi.framework.Bundle#getEntry(String)}
+     */
+    public static class BundleResource extends URLResource
+    {
+        public BundleResource(URL url)
+        {
+            super(url, null, Resource.getDefaultUseCaches());
+        }
+    }
 }
