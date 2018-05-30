@@ -19,6 +19,7 @@
 package org.eclipse.jetty.osgi.boot.internal.serverfactory;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,7 +55,6 @@ import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 import org.eclipse.jetty.util.resource.Resource;
-import org.eclipse.jetty.util.resource.URLResource;
 import org.eclipse.jetty.xml.XmlConfiguration;
 
 /**
@@ -143,16 +143,10 @@ public class ServerInstanceWrapper
 
         for (URL jettyConfiguration : jettyConfigurations)
         {
-            try(Resource r = new BundleResource(jettyConfiguration))
+            try(InputStream in = jettyConfiguration.openStream())
             {
                 // Execute a Jetty configuration file
-                if (!r.exists())
-                {
-                    LOG.warn("File does not exist "+r);
-                    throw new IllegalStateException("No such jetty server config file: "+r);
-                }
-
-                XmlConfiguration config = new XmlConfiguration(r.getURI().toURL());
+                XmlConfiguration config = new XmlConfiguration(in);
 
                 config.getIdMap().putAll(id_map);
                 config.getProperties().putAll(properties);
@@ -469,16 +463,5 @@ public class ServerInstanceWrapper
             }
         }
         return files;
-    }
-
-    /**
-     * A Resource suitable for use the Bad/Unpredictable URLs from {@link org.osgi.framework.Bundle#getEntry(String)}
-     */
-    public static class BundleResource extends URLResource
-    {
-        public BundleResource(URL url)
-        {
-            super(url, null, Resource.getDefaultUseCaches());
-        }
     }
 }
