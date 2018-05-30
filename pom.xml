@@ -34,7 +34,8 @@
     <mavenPluginToolsVersion>3.5.2</mavenPluginToolsVersion>
     <mavenVersion>3.5.0</mavenVersion>
     <src.dir>${basedir}/src/main/java</src.dir>
-    <revision>9.4.11-SNAPSHOT</revision>
+    <jetty.version>9.4.11-SNAPSHOT</jetty.version>
+    <revision>${jetty.version}</revision>
   </properties>
 
   <licenses>
